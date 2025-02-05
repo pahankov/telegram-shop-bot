@@ -1,5 +1,6 @@
 from sqlalchemy import Column, Integer, String, DateTime, Boolean
 from sqlalchemy.ext.declarative import declarative_base
+from datetime import datetime
 
 Base = declarative_base()
 
@@ -12,5 +13,5 @@ class User(Base):
     first_name = Column(String)
     last_name = Column(String)
     username = Column(String)
-    registered_at = Column(DateTime)
+    registered_at = Column(DateTime, default=datetime.now)
     is_known = Column(Boolean, default=False)

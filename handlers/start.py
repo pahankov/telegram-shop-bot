@@ -1,27 +1,20 @@
+from telegram import Update
+from telegram.ext import ContextTypes, CommandHandler
+from database.crud import get_or_create_user
+from utils.logger import user_logger  # Теперь импорт будет работать
+
+
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
-    db_user = await get_or_create_user(user)
+    async with context.application.persistence.session() as session:
+        db_user = await get_or_create_user(session, user)
 
-    if not db_user.is_known:
-        # Запрос разрешений
-        await update.message.reply_text(
-            "Для продолжения работы нам нужно сохранить ваши базовые данные.",
-            reply_markup=InlineKeyboardMarkup([
-                [InlineKeyboardButton("Разрешить", callback_data="accept_terms"),
-                 InlineKeyboardButton("Отказать", callback_data="decline_terms")]
-            ])
-        )
-    else:
-        await update.message.reply_text(f"С возвращением, {user.full_name}!")
+    greeting = f"Привет, {user.full_name}!" if db_user.is_known else """
+    Добро пожаловать! Для работы мне потребуется сохранять ваши данные.
+    """
+
+    await update.message.reply_text(greeting)
+    user_logger.info(f"User {user.id} started conversation")
 
 
-async def handle_terms_response(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    query = update.callback_query
-    await query.answer()
-
-    if query.data == "accept_terms":
-        # Обновляем статус пользователя
-        await update_user_status(query.from_user.id, is_known=True)
-        await query.edit_message_text("Спасибо! Теперь вы можете пользоваться ботом.")
-    else:
-        await query.edit_message_text("Без сохранения данных функционал бота будет ограничен.")
+start_handler = CommandHandler('start', start)
