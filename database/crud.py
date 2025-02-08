@@ -2,7 +2,6 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from database.models import User
 
-
 async def get_or_create_user(session: AsyncSession, tg_user) -> User:
     """Получает или создает пользователя в БД"""
     try:

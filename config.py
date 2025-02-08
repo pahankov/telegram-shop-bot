@@ -4,7 +4,6 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-
 class Config:
     # Обязательные параметры
     TOKEN = os.getenv("TELEGRAM_TOKEN")
@@ -12,11 +11,16 @@ class Config:
         raise ValueError("Токен бота не указан в .env")
 
     WEBHOOK_URL = os.getenv("WEBHOOK_URL")
-    if not WEBHOOK_URL or not WEBHOOK_URL.startswith("https://"):
-        raise ValueError("Неверный формат WEBHOOK_URL в .env")
+    if not WEBHOOK_URL:
+        raise ValueError("WEBHOOK_URL не указан в .env")
 
-    # Опциональные параметры
+    # Порт для вебхука (смените порт на другой, который свободен)
+    WEBHOOK_PORT = 8444  # Попробуйте использовать другой порт
+
+    # Режим отладки
     DEBUG = os.getenv("DEBUG", "False").lower() == "true"
+
+    # База данных
     DB_URL = os.getenv("DATABASE_URL", "sqlite+aiosqlite:///shop_bot.db")
 
     # Логирование
