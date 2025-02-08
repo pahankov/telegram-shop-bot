@@ -2,13 +2,9 @@
 .venv/
 venv/
 
-# PyCharm
-.idea/
-*.iml
-
 # Environment
 .env
-.env.local
+*.env.local
 
 # Logs
 logs/
@@ -17,5 +13,7 @@ logs/
 # Database
 *.db
 *.sqlite
-__pycache__/
-*.py[cod]
+
+# IDE
+.idea/
+.vscode/
